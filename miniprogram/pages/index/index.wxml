@@ -1,0 +1,95 @@
+<view class="page-index">
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <view class="search-input-wrap">
+      <icon type="search" size="14" color="#999"/>
+      <input class="search-input" placeholder="搜索美食、店铺" value="{{searchKeyword}}" bindinput="onSearchInput" bindconfirm="goSearch"/>
+    </view>
+    <view class="search-btn" bindtap="goSearch">搜索</view>
+  </view>
+
+  <!-- 轮播图 -->
+  <swiper class="banner-swiper" indicator-dots autoplay circular interval="3000">
+    <swiper-item wx:for="{{bannerList}}" wx:key="id">
+      <image class="banner-img" src="{{item.image}}" mode="aspectFill"/>
+    </swiper-item>
+  </swiper>
+
+  <!-- 分类入口 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">美食分类</text>
+      <text class="section-more" bindtap="goAllCategories">全部 ></text>
+    </view>
+    <view class="category-grid">
+      <view class="category-item" wx:for="{{categoryList}}" wx:key="id" bindtap="goCategory" data-id="{{item.id}}">
+        <view class="category-icon">{{item.name[0]}}</view>
+        <text class="category-name">{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 个性化推荐 -->
+  <view class="section" wx:if="{{recommendShops.length > 0}}">
+    <view class="section-header">
+      <text class="section-title">为你推荐</text>
+      <text class="section-tag">个性化</text>
+    </view>
+    <scroll-view class="recommend-scroll" scroll-x>
+      <view class="recommend-item" wx:for="{{recommendShops}}" wx:key="id" bindtap="goShopDetail" data-id="{{item.id}}">
+        <image class="recommend-img" src="{{item.logo || '/images/default-shop.png'}}" mode="aspectFill"/>
+        <text class="recommend-name">{{item.name}}</text>
+        <view class="recommend-info">
+          <text class="rating-star">★ {{item.rating}}</text>
+          <text class="text-gray text-sm">¥{{item.avgPrice}}/人</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 热门店铺 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">热门店铺</text>
+      <text class="section-more" bindtap="goShopList">更多 ></text>
+    </view>
+    <view class="shop-list">
+      <view class="shop-card" wx:for="{{popularShops}}" wx:key="id" bindtap="goShopDetail" data-id="{{item.id}}">
+        <image class="shop-img" src="{{item.logo || '/images/default-shop.png'}}" mode="aspectFill"/>
+        <view class="shop-info">
+          <text class="shop-name">{{item.name}}</text>
+          <view class="shop-rating">
+            <text class="rating-star">★ {{item.rating}}</text>
+            <text class="text-gray text-sm ml-10">月售{{item.totalSales}}</text>
+          </view>
+          <view class="shop-meta">
+            <text class="text-gray text-sm">¥{{item.avgPrice}}/人</text>
+            <text class="text-gray text-sm ml-10">{{item.address}}</text>
+          </view>
+          <view class="shop-tags" wx:if="{{item.tags}}">
+            <text class="tag" wx:for="{{item.tags.split(',')}}" wx:for-item="tag" wx:key="*this">{{tag}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 热门菜品 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">热门菜品</text>
+    </view>
+    <view class="dish-grid">
+      <view class="dish-card" wx:for="{{popularDishes}}" wx:key="id" bindtap="goDishDetail" data-id="{{item.id}}">
+        <image class="dish-img" src="{{item.image || '/images/default-dish.png'}}" mode="aspectFill"/>
+        <view class="dish-info">
+          <text class="dish-name">{{item.name}}</text>
+          <view class="dish-bottom">
+            <text class="price"><text class="price-symbol">¥</text>{{item.price}}</text>
+            <text class="text-gray text-sm">已售{{item.sales}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

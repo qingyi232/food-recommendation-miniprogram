@@ -1,0 +1,90 @@
+=====================================================
+  商家端数据可视化图表 - 部署教程
+=====================================================
+
+本次更新为商家端"数据统计"页面添加了：
+1. 经营数据看板（新增今日订单、今日营收、月营业额指标）
+2. 热门菜品销量排行（柱状图）
+3. 各分类销量分布（饼图）
+
+共涉及 7 个文件（3个后端 + 4个前端），请按以下步骤操作：
+
+=====================================================
+一、后端文件覆盖（3个文件）
+=====================================================
+
+【文件1】OrderService.java （修改）
+  更新包路径：更新包\backend\src\main\java\com\campus\food\service\OrderService.java
+  覆盖到项目：backend\src\main\java\com\campus\food\service\OrderService.java
+  说明：新增了 getMerchantChartData 接口方法定义
+
+【文件2】OrderServiceImpl.java （修改）
+  更新包路径：更新包\backend\src\main\java\com\campus\food\service\impl\OrderServiceImpl.java
+  覆盖到项目：backend\src\main\java\com\campus\food\service\impl\OrderServiceImpl.java
+  说明：实现了图表数据查询（菜品销量TOP10 + 分类销量分布）
+        增强了原有统计接口（新增今日订单、今日营收、月营业额）
+
+【文件3】OrderController.java （修改）
+  更新包路径：更新包\backend\src\main\java\com\campus\food\controller\OrderController.java
+  覆盖到项目：backend\src\main\java\com\campus\food\controller\OrderController.java
+  说明：新增了 GET /api/order/merchant/chart-data 接口
+
+=====================================================
+二、前端文件覆盖（4个文件）
+=====================================================
+
+【文件4】wxcharts.js （新增）
+  更新包路径：更新包\miniprogram\utils\wxcharts.js
+  放到项目：  miniprogram\utils\wxcharts.js
+  说明：新建的图表绘制工具库（支持柱状图和饼图）
+
+【文件5】stats.js （修改）
+  更新包路径：更新包\miniprogram\pages\merchant\stats\stats.js
+  覆盖到项目：miniprogram\pages\merchant\stats\stats.js
+  说明：添加了图表数据加载和Canvas渲染逻辑
+
+【文件6】stats.wxml （修改）
+  更新包路径：更新包\miniprogram\pages\merchant\stats\stats.wxml
+  覆盖到项目：miniprogram\pages\merchant\stats\stats.wxml
+  说明：添加了经营数据看板（7项指标）和2个图表区域
+
+【文件7】stats.wxss （修改）
+  更新包路径：更新包\miniprogram\pages\merchant\stats\stats.wxss
+  覆盖到项目：miniprogram\pages\merchant\stats\stats.wxss
+  说明：新的页面样式（图表卡片、数据看板样式）
+
+=====================================================
+三、部署步骤
+=====================================================
+
+步骤1：停止后端服务
+
+步骤2：按照上面的路径，将7个文件逐一覆盖到对应位置
+       注意：文件4（wxcharts.js）是新文件，直接放到 miniprogram\utils\ 目录下即可
+
+步骤3：重新编译并启动后端
+       cd backend
+       mvn clean package -DskipTests
+       java -jar target/xxx.jar
+       （或者用 mvn spring-boot:run）
+
+步骤4：打开微信开发者工具，刷新小程序项目
+       小程序会自动加载新的前端文件
+
+步骤5：用商家账号登录，进入"数据统计"页面，确认：
+       - 顶部经营数据看板显示7项指标（订单总数、今日订单、已完成、待处理、今日营收、本月营业额、累计总收入）
+       - 中间显示菜品销量TOP10柱状图
+       - 下面显示各分类销量分布饼图
+
+=====================================================
+四、测试账号
+=====================================================
+商家账号：merchant01  密码：123456
+商家账号：merchant02  密码：123456
+
+=====================================================
+注意事项：
+- 本次更新不涉及数据库变更，无需修改数据库
+- 如果商家没有菜品数据，图表区域会显示"暂无数据"
+- 后端需要 JDK 1.8+，前端需要微信开发者工具
+=====================================================

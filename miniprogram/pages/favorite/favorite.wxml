@@ -1,0 +1,31 @@
+<view class="page-favorite">
+  <view class="tab-bar">
+    <view class="tab-item {{currentTab === 0 ? 'active' : ''}}" bindtap="switchTab" data-tab="{{0}}">收藏店铺</view>
+    <view class="tab-item {{currentTab === 1 ? 'active' : ''}}" bindtap="switchTab" data-tab="{{1}}">收藏美食</view>
+  </view>
+
+  <view wx:if="{{currentTab === 0}}" class="list-wrap">
+    <view class="shop-card" wx:for="{{favoriteShops}}" wx:key="id" bindtap="goShopDetail" data-id="{{item.id}}">
+      <image class="shop-img" src="{{item.logo || '/images/default-shop.png'}}" mode="aspectFill"/>
+      <view class="shop-info">
+        <text class="shop-name">{{item.name}}</text>
+        <view class="flex-row"><text class="rating-star">★ {{item.rating}}</text><text class="text-gray text-sm ml-10">¥{{item.avgPrice}}/人</text></view>
+        <text class="text-gray text-sm">{{item.address}}</text>
+      </view>
+    </view>
+    <view class="empty-tip" wx:if="{{favoriteShops.length === 0}}">暂无收藏店铺</view>
+  </view>
+
+  <view wx:if="{{currentTab === 1}}" class="list-wrap">
+    <view class="dish-grid">
+      <view class="dish-card" wx:for="{{favoriteFoods}}" wx:key="id" bindtap="goDishDetail" data-id="{{item.id}}">
+        <image class="dish-img" src="{{item.image || '/images/default-dish.png'}}" mode="aspectFill"/>
+        <view class="dish-info">
+          <text class="dish-name">{{item.name}}</text>
+          <text class="price"><text class="price-symbol">¥</text>{{item.price}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="empty-tip" wx:if="{{favoriteFoods.length === 0}}">暂无收藏美食</view>
+  </view>
+</view>

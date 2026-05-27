@@ -1,0 +1,5 @@
+.taste-item { margin-bottom: 20rpx; }
+.taste-item text { font-size: 28rpx; }
+.category-grid { display: flex; flex-wrap: wrap; gap: 16rpx; }
+.category-tag { padding: 12rpx 28rpx; border: 2rpx solid #eee; border-radius: 28rpx; font-size: 26rpx; color: #666; background: #f9f9f9; }
+.category-tag.selected { background: #ff6b35; color: #fff; border-color: #ff6b35; }

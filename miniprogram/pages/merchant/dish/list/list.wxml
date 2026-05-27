@@ -1,0 +1,25 @@
+<view class="container">
+  <scroll-view class="shop-tabs" scroll-x wx:if="{{shops.length > 1}}">
+    <view class="shop-tab {{currentShopId === item.id ? 'active' : ''}}" wx:for="{{shops}}" wx:key="id" bindtap="selectShop" data-id="{{item.id}}">{{item.name}}</view>
+  </scroll-view>
+
+  <view class="flex-between mb-20">
+    <text class="text-bold">菜品列表</text>
+    <view class="btn-primary" style="padding:12rpx 30rpx;font-size:26rpx;" bindtap="goAddDish">+ 添加菜品</view>
+  </view>
+
+  <view class="dish-item card" wx:for="{{dishes}}" wx:key="id" bindtap="goEditDish" data-id="{{item.id}}">
+    <view class="flex-row">
+      <image class="dish-img" src="{{item.image || '/images/default-dish.png'}}" mode="aspectFill"/>
+      <view class="dish-info">
+        <text class="text-bold">{{item.name}}</text>
+        <text class="price mt-10"><text class="price-symbol">¥</text>{{item.price}}</text>
+        <view class="flex-between mt-10">
+          <text class="text-gray text-sm">已售{{item.sales}}</text>
+          <text class="text-sm {{item.status === 1 ? 'text-primary' : 'text-gray'}}">{{item.status === 1 ? '上架' : '下架'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+  <view class="empty-tip" wx:if="{{dishes.length === 0}}">暂无菜品</view>
+</view>

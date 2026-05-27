@@ -1,0 +1,68 @@
+<view class="container">
+  <!-- 经营数据看板 -->
+  <view class="section-title">经营数据看板</view>
+  <view class="stats-grid" wx:if="{{stats}}">
+    <view class="stat-card">
+      <text class="stat-value">{{stats.totalOrders || 0}}</text>
+      <text class="stat-label">订单总数</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-value warn">{{stats.todayOrders || 0}}</text>
+      <text class="stat-label">今日订单</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-value success">{{stats.completedOrders || 0}}</text>
+      <text class="stat-label">已完成</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-value warn">{{stats.pendingOrders || 0}}</text>
+      <text class="stat-label">待处理</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-value primary">¥{{stats.todayAmount || '0.00'}}</text>
+      <text class="stat-label">今日营收</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-value primary">¥{{stats.monthAmount || '0.00'}}</text>
+      <text class="stat-label">本月营业额</text>
+    </view>
+    <view class="stat-card full-width">
+      <text class="stat-value primary lg">¥{{stats.totalAmount || '0.00'}}</text>
+      <text class="stat-label">累计总收入</text>
+    </view>
+  </view>
+
+  <!-- 菜品销量TOP10 柱状图 -->
+  <view class="chart-card">
+    <view class="chart-header">
+      <text class="chart-title">热门菜品销量排行</text>
+      <text class="chart-sub">菜品销量 TOP10</text>
+    </view>
+    <canvas type="2d" id="barCanvas" class="chart-canvas bar-canvas"></canvas>
+  </view>
+
+  <!-- 分类销量分布 饼图 -->
+  <view class="chart-card">
+    <view class="chart-header">
+      <text class="chart-title">各分类销量分布</text>
+      <text class="chart-sub">了解用户口味偏好，合理调整备货策略</text>
+    </view>
+    <canvas type="2d" id="pieCanvas" class="chart-canvas pie-canvas"></canvas>
+  </view>
+
+  <!-- 我的店铺 -->
+  <view class="card">
+    <text class="section-title" style="margin:0 0 16rpx 0;">我的店铺</text>
+    <view class="shop-stat-item" wx:for="{{shops}}" wx:key="id">
+      <view class="flex-between mt-20">
+        <text class="text-bold">{{item.name}}</text>
+        <text class="rating-star">★ {{item.rating}}</text>
+      </view>
+      <view class="flex-between mt-10">
+        <text class="text-gray text-sm">总销量：{{item.totalSales}}</text>
+        <text class="text-gray text-sm">人均：¥{{item.avgPrice}}</text>
+      </view>
+    </view>
+    <view class="empty-tip" wx:if="{{shops.length === 0}}">暂无店铺数据</view>
+  </view>
+</view>

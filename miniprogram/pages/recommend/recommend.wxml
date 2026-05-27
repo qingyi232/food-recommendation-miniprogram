@@ -1,0 +1,54 @@
+<view class="page-recommend">
+  <view wx:if="{{!isLogin}}" class="login-tip">
+    <view class="login-icon">🍽️</view>
+    <text class="login-text">登录后即可获得个性化推荐</text>
+    <view class="btn-primary login-btn" bindtap="goLogin">立即登录</view>
+  </view>
+
+  <view wx:else>
+    <view class="tab-bar">
+      <view class="tab-item {{currentTab === 0 ? 'active' : ''}}" bindtap="switchTab" data-tab="{{0}}">推荐店铺</view>
+      <view class="tab-item {{currentTab === 1 ? 'active' : ''}}" bindtap="switchTab" data-tab="{{1}}">推荐菜品</view>
+    </view>
+
+    <view class="recommend-tip">
+      <text>根据您的口味偏好和浏览历史，为您精选以下内容</text>
+    </view>
+
+    <!-- 推荐店铺 -->
+    <view wx:if="{{currentTab === 0}}">
+      <view class="shop-card" wx:for="{{recommendShops}}" wx:key="id" bindtap="goShopDetail" data-id="{{item.id}}">
+        <image class="shop-img" src="{{item.logo || '/images/default-shop.png'}}" mode="aspectFill"/>
+        <view class="shop-info">
+          <text class="shop-name">{{item.name}}</text>
+          <view class="shop-rating">
+            <text class="rating-star">★ {{item.rating}}</text>
+            <text class="text-gray text-sm ml-10">月售{{item.totalSales}}</text>
+          </view>
+          <text class="text-gray text-sm">¥{{item.avgPrice}}/人 | {{item.address}}</text>
+          <view class="shop-tags" wx:if="{{item.tags}}">
+            <text class="tag" wx:for="{{item.tags.split(',')}}" wx:for-item="tag" wx:key="*this">{{tag}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="empty-tip" wx:if="{{recommendShops.length === 0}}">暂无推荐，多浏览一些店铺吧</view>
+    </view>
+
+    <!-- 推荐菜品 -->
+    <view wx:if="{{currentTab === 1}}">
+      <view class="dish-grid">
+        <view class="dish-card" wx:for="{{recommendDishes}}" wx:key="id" bindtap="goDishDetail" data-id="{{item.id}}">
+          <image class="dish-img" src="{{item.image || '/images/default-dish.png'}}" mode="aspectFill"/>
+          <view class="dish-info">
+            <text class="dish-name">{{item.name}}</text>
+            <view class="dish-bottom">
+              <text class="price"><text class="price-symbol">¥</text>{{item.price}}</text>
+              <text class="text-gray text-sm">已售{{item.sales}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="empty-tip" wx:if="{{recommendDishes.length === 0}}">暂无推荐，多浏览一些菜品吧</view>
+    </view>
+  </view>
+</view>

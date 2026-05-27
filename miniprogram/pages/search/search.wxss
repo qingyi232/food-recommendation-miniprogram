@@ -1,0 +1,18 @@
+.search-bar { display: flex; align-items: center; padding: 20rpx 24rpx; background: #ff6b35; }
+.search-input-wrap { flex: 1; display: flex; align-items: center; background: #fff; border-radius: 32rpx; padding: 12rpx 24rpx; }
+.search-input { flex: 1; margin-left: 12rpx; font-size: 28rpx; }
+.search-btn { color: #fff; font-size: 28rpx; margin-left: 20rpx; }
+.tab-bar { display: flex; background: #fff; }
+.tab-item { flex: 1; text-align: center; padding: 24rpx 0; font-size: 30rpx; color: #666; position: relative; }
+.tab-item.active { color: #ff6b35; font-weight: bold; }
+.tab-item.active::after { content: ''; position: absolute; bottom: 0; left: 30%; width: 40%; height: 4rpx; background: #ff6b35; border-radius: 2rpx; }
+.list-wrap { padding: 20rpx 24rpx; }
+.shop-card { display: flex; background: #fff; border-radius: 12rpx; padding: 20rpx; margin-bottom: 16rpx; box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.04); }
+.shop-img { width: 150rpx; height: 150rpx; border-radius: 8rpx; margin-right: 16rpx; flex-shrink: 0; }
+.shop-info { flex: 1; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; }
+.shop-name { font-size: 28rpx; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dish-grid { display: flex; flex-wrap: wrap; justify-content: space-between; }
+.dish-card { width: 48%; background: #fff; border-radius: 12rpx; overflow: hidden; margin-bottom: 16rpx; box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.04); }
+.dish-img { width: 100%; height: 200rpx; }
+.dish-info { padding: 16rpx; }
+.dish-name { font-size: 26rpx; font-weight: bold; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

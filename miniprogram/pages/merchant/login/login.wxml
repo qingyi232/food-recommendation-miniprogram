@@ -1,0 +1,20 @@
+<view class="page-login">
+  <view class="login-logo">🏪</view>
+  <text class="login-title">商家登录</text>
+  <text class="login-subtitle">管理您的店铺</text>
+  <view class="form-wrap">
+    <view class="form-item">
+      <text class="form-label">用户名</text>
+      <input class="form-input" placeholder="请输入商家用户名" bindinput="onInput" data-field="username"/>
+    </view>
+    <view class="form-item">
+      <text class="form-label">密码</text>
+      <input class="form-input" placeholder="请输入密码" password bindinput="onInput" data-field="password"/>
+    </view>
+    <button class="btn-primary login-submit" bindtap="doLogin">登录</button>
+    <view class="register-link" bindtap="goRegister">
+      <text>还没有商家账号？</text>
+      <text class="text-primary">立即注册</text>
+    </view>
+  </view>
+</view>

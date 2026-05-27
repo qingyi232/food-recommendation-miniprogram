@@ -1,0 +1,5 @@
+.shop-card { display: flex; background: #fff; border-radius: 12rpx; padding: 20rpx; margin-bottom: 20rpx; box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.04); }
+.shop-img { width: 160rpx; height: 160rpx; border-radius: 8rpx; margin-right: 20rpx; flex-shrink: 0; }
+.shop-info { flex: 1; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; }
+.shop-name { font-size: 30rpx; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.shop-tags { display: flex; flex-wrap: wrap; margin-top: 6rpx; }

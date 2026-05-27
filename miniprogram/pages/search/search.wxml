@@ -1,0 +1,44 @@
+<view class="page-search">
+  <view class="search-bar">
+    <view class="search-input-wrap">
+      <icon type="search" size="14" color="#999"/>
+      <input class="search-input" placeholder="搜索美食、店铺" value="{{keyword}}" bindinput="onKeywordInput" bindconfirm="doSearch" focus/>
+    </view>
+    <view class="search-btn" bindtap="doSearch">搜索</view>
+  </view>
+
+  <view wx:if="{{searched}}">
+    <view class="tab-bar">
+      <view class="tab-item {{currentTab === 0 ? 'active' : ''}}" bindtap="switchTab" data-tab="{{0}}">店铺({{shopList.length}})</view>
+      <view class="tab-item {{currentTab === 1 ? 'active' : ''}}" bindtap="switchTab" data-tab="{{1}}">菜品({{dishList.length}})</view>
+    </view>
+
+    <view wx:if="{{currentTab === 0}}" class="list-wrap">
+      <view class="shop-card" wx:for="{{shopList}}" wx:key="id" bindtap="goShopDetail" data-id="{{item.id}}">
+        <image class="shop-img" src="{{item.logo || '/images/default-shop.png'}}" mode="aspectFill"/>
+        <view class="shop-info">
+          <text class="shop-name">{{item.name}}</text>
+          <view class="flex-row"><text class="rating-star">★ {{item.rating}}</text><text class="text-gray text-sm ml-10">¥{{item.avgPrice}}/人</text></view>
+          <text class="text-gray text-sm">{{item.address}}</text>
+        </view>
+      </view>
+      <view class="empty-tip" wx:if="{{shopList.length === 0}}">未找到相关店铺</view>
+    </view>
+
+    <view wx:if="{{currentTab === 1}}" class="list-wrap">
+      <view class="dish-grid">
+        <view class="dish-card" wx:for="{{dishList}}" wx:key="id" bindtap="goDishDetail" data-id="{{item.id}}">
+          <image class="dish-img" src="{{item.image || '/images/default-dish.png'}}" mode="aspectFill"/>
+          <view class="dish-info">
+            <text class="dish-name">{{item.name}}</text>
+            <view class="flex-between mt-10">
+              <text class="price"><text class="price-symbol">¥</text>{{item.price}}</text>
+              <text class="text-gray text-sm">已售{{item.sales}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="empty-tip" wx:if="{{dishList.length === 0}}">未找到相关菜品</view>
+    </view>
+  </view>
+</view>

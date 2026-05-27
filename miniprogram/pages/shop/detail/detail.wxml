@@ -1,0 +1,87 @@
+<view class="page-shop-detail" wx:if="{{shop}}">
+  <image class="shop-banner" src="{{shop.logo || '/images/default-shop.png'}}" mode="aspectFill"/>
+  
+  <view class="shop-header card">
+    <view class="flex-between">
+      <text class="text-xl text-bold">{{shop.name}}</text>
+      <view class="favorite-btn" bindtap="toggleFavorite">
+        <text>{{isFavorite ? '❤️' : '🤍'}}</text>
+      </view>
+    </view>
+    <view class="flex-row mt-10">
+      <text class="rating-star">★ {{shop.rating}}</text>
+      <text class="text-gray text-sm ml-20">月售{{shop.totalSales}}</text>
+      <text class="text-gray text-sm ml-20">¥{{shop.avgPrice}}/人</text>
+    </view>
+    <view class="mt-10 text-gray text-sm">📍 {{shop.address}}</view>
+    <view class="mt-10 text-gray text-sm">🕐 {{shop.businessHours}}</view>
+    <view class="mt-10 text-gray text-sm" bindtap="callPhone">📞 {{shop.phone}}</view>
+    <view class="shop-tags mt-10" wx:if="{{shop.tags}}">
+      <text class="tag" wx:for="{{shop.tags.split(',')}}" wx:key="*this">{{item}}</text>
+    </view>
+    <view class="mt-10 text-gray text-sm" wx:if="{{shop.description}}">{{shop.description}}</view>
+  </view>
+
+  <view class="tab-bar">
+    <view class="tab-item {{currentTab === 0 ? 'active' : ''}}" bindtap="switchTab" data-tab="{{0}}">菜品</view>
+    <view class="tab-item {{currentTab === 1 ? 'active' : ''}}" bindtap="switchTab" data-tab="{{1}}">评价</view>
+  </view>
+
+  <!-- 菜品列表 -->
+  <view wx:if="{{currentTab === 0}}" class="dish-list">
+    <view class="dish-item" wx:for="{{dishes}}" wx:key="id">
+      <image class="dish-img" src="{{item.image || '/images/default-dish.png'}}" mode="aspectFill" bindtap="goDishDetail" data-id="{{item.id}}"/>
+      <view class="dish-info">
+        <text class="dish-name" bindtap="goDishDetail" data-id="{{item.id}}">{{item.name}}</text>
+        <text class="text-gray text-sm">{{item.description}}</text>
+        <view class="flex-between mt-10">
+          <text class="price"><text class="price-symbol">¥</text>{{item.price}}</text>
+          <view class="cart-btns">
+            <view class="cart-btn minus" wx:if="{{cart[item.id]}}" catchtap="removeFromCart" data-id="{{item.id}}">-</view>
+            <text class="cart-num" wx:if="{{cart[item.id]}}">{{cart[item.id].quantity}}</text>
+            <view class="cart-btn plus" catchtap="addToCart" data-dish="{{item}}">+</view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="empty-tip" wx:if="{{dishes.length === 0}}">暂无菜品</view>
+  </view>
+
+  <!-- 评价列表 -->
+  <view wx:if="{{currentTab === 1}}" class="review-list">
+    <view class="flex-between p-20">
+      <text class="text-bold">用户评价</text>
+      <text class="text-primary text-sm" bindtap="goAddReview">写评价</text>
+    </view>
+    <view class="review-item card" wx:for="{{reviews}}" wx:key="id">
+      <view class="flex-row">
+        <image class="review-avatar" src="{{item.userAvatar || '/images/default-avatar.png'}}" mode="aspectFill"/>
+        <view class="ml-10">
+          <text class="text-sm text-bold">{{item.userName || '匿名用户'}}</text>
+          <view class="rating-star text-sm">★ {{item.rating}}</view>
+        </view>
+      </view>
+      <text class="review-content mt-10">{{item.content}}</text>
+      <view class="text-gray text-sm mt-10">{{item.createTime}}</view>
+      <view class="review-reply mt-10" wx:if="{{item.reply}}">
+        <text class="text-sm text-bold">商家回复：</text>
+        <text class="text-sm">{{item.reply}}</text>
+      </view>
+    </view>
+    <view class="text-center p-20" wx:if="{{reviews.length > 0}}">
+      <text class="text-primary text-sm" bindtap="goAllReviews">查看全部评价 ></text>
+    </view>
+    <view class="empty-tip" wx:if="{{reviews.length === 0}}">暂无评价</view>
+  </view>
+
+  <button class="share-btn" open-type="share">分享给好友</button>
+
+  <!-- 购物车栏 -->
+  <view class="cart-bar" wx:if="{{cartCount > 0}}">
+    <view class="cart-info">
+      <text class="cart-total">¥{{cartTotal}}</text>
+      <text class="cart-count">共{{cartCount}}件</text>
+    </view>
+    <view class="cart-order-btn" bindtap="goOrder">去下单</view>
+  </view>
+</view>

@@ -1,0 +1,3 @@
+.form-item { margin-bottom: 20rpx; }
+.form-label { font-size: 26rpx; color: #333; margin-bottom: 8rpx; display: block; }
+.form-input { border: 2rpx solid #eee; border-radius: 12rpx; padding: 16rpx 20rpx; font-size: 28rpx; background: #f9f9f9; }

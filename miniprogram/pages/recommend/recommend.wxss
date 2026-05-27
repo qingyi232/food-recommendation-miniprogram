@@ -1,0 +1,26 @@
+.login-tip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120rpx 40rpx;
+}
+.login-icon { font-size: 120rpx; margin-bottom: 30rpx; }
+.login-text { font-size: 30rpx; color: #666; margin-bottom: 40rpx; }
+.login-btn { width: 400rpx; }
+.tab-bar { display: flex; background: #fff; }
+.tab-item { flex: 1; text-align: center; padding: 24rpx 0; font-size: 30rpx; color: #666; position: relative; }
+.tab-item.active { color: #ff6b35; font-weight: bold; }
+.tab-item.active::after { content: ''; position: absolute; bottom: 0; left: 30%; width: 40%; height: 4rpx; background: #ff6b35; border-radius: 2rpx; }
+.recommend-tip { padding: 20rpx 24rpx; font-size: 24rpx; color: #999; background: #fff5f0; }
+.shop-card { display: flex; background: #fff; border-radius: 12rpx; padding: 20rpx; margin: 20rpx 24rpx 0; box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.04); }
+.shop-img { width: 160rpx; height: 160rpx; border-radius: 8rpx; margin-right: 20rpx; flex-shrink: 0; }
+.shop-info { flex: 1; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; }
+.shop-name { font-size: 30rpx; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.shop-rating { display: flex; align-items: center; }
+.shop-tags { display: flex; flex-wrap: wrap; margin-top: 6rpx; }
+.dish-grid { display: flex; flex-wrap: wrap; padding: 20rpx 24rpx; justify-content: space-between; }
+.dish-card { width: 48%; background: #fff; border-radius: 12rpx; overflow: hidden; margin-bottom: 20rpx; box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.04); }
+.dish-img { width: 100%; height: 200rpx; }
+.dish-info { padding: 16rpx; }
+.dish-name { font-size: 26rpx; font-weight: bold; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dish-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: 8rpx; }

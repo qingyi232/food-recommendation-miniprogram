@@ -1,0 +1,31 @@
+<view class="page-order">
+  <scroll-view class="status-bar" scroll-x>
+    <view class="status-item {{currentStatus === item.value ? 'active' : ''}}" 
+          wx:for="{{statusList}}" wx:key="label" 
+          bindtap="switchStatus" data-status="{{item.value}}">{{item.label}}</view>
+  </scroll-view>
+
+  <view class="order-list">
+    <view class="order-card card" wx:for="{{orders}}" wx:key="id" bindtap="goOrderDetail" data-id="{{item.id}}">
+      <view class="flex-between">
+        <text class="text-sm text-bold">{{item.shopName}}</text>
+        <text class="text-sm text-primary">{{item.statusText}}</text>
+      </view>
+      <view class="divider"></view>
+      <view class="order-item-row" wx:for="{{item.items}}" wx:for-item="dish" wx:key="id">
+        <text class="flex-1 text-sm">{{dish.dishName}}</text>
+        <text class="text-sm text-gray">x{{dish.quantity}}</text>
+        <text class="text-sm ml-20">¥{{dish.amount}}</text>
+      </view>
+      <view class="divider"></view>
+      <view class="flex-between">
+        <text class="text-gray text-sm">{{item.createTime}}</text>
+        <text class="text-bold">合计：<text class="price">¥{{item.totalAmount}}</text></text>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-tip" wx:if="{{orders.length === 0 && !loading}}">暂无订单</view>
+  <view class="loading-tip" wx:if="{{loading}}">加载中...</view>
+  <view class="loading-tip" wx:if="{{!hasMore && orders.length > 0}}">没有更多了</view>
+</view>

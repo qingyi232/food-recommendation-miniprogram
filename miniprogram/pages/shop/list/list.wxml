@@ -1,0 +1,19 @@
+<view class="container">
+  <view class="shop-card" wx:for="{{shopList}}" wx:key="id" bindtap="goShopDetail" data-id="{{item.id}}">
+    <image class="shop-img" src="{{item.logo || '/images/default-shop.png'}}" mode="aspectFill"/>
+    <view class="shop-info">
+      <text class="shop-name">{{item.name}}</text>
+      <view class="flex-row">
+        <text class="rating-star">★ {{item.rating}}</text>
+        <text class="text-gray text-sm ml-10">月售{{item.totalSales}}</text>
+      </view>
+      <text class="text-gray text-sm">¥{{item.avgPrice}}/人 | {{item.address}}</text>
+      <view class="shop-tags" wx:if="{{item.tags}}">
+        <text class="tag" wx:for="{{item.tags.split(',')}}" wx:for-item="tag" wx:key="*this">{{tag}}</text>
+      </view>
+    </view>
+  </view>
+  <view class="empty-tip" wx:if="{{shopList.length === 0 && !loading}}">暂无店铺</view>
+  <view class="loading-tip" wx:if="{{loading}}">加载中...</view>
+  <view class="loading-tip" wx:if="{{!hasMore && shopList.length > 0}}">没有更多了</view>
+</view>

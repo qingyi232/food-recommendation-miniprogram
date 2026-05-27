@@ -1,0 +1,40 @@
+<view class="container">
+  <view class="flex-between mb-20">
+    <text class="text-lg text-bold">我的店铺</text>
+    <view class="btn-primary" style="padding:12rpx 30rpx;font-size:26rpx;" bindtap="showAddForm">+ 添加店铺</view>
+  </view>
+
+  <view class="shop-card card" wx:for="{{shops}}" wx:key="id">
+    <view class="flex-between">
+      <text class="text-bold">{{item.name}}</text>
+      <text class="text-primary text-sm" bindtap="editShop" data-shop="{{item}}">编辑</text>
+    </view>
+    <text class="text-gray text-sm mt-10">地址：{{item.address || '未设置'}}</text>
+    <text class="text-gray text-sm">电话：{{item.phone || '未设置'}}</text>
+    <text class="text-gray text-sm">营业时间：{{item.businessHours || '未设置'}}</text>
+    <view class="flex-row mt-10">
+      <text class="rating-star">★ {{item.rating}}</text>
+      <text class="text-gray text-sm ml-20">¥{{item.avgPrice}}/人</text>
+    </view>
+  </view>
+  <view class="empty-tip" wx:if="{{shops.length === 0}}">暂无店铺，点击上方添加</view>
+
+  <!-- 表单弹窗 -->
+  <view class="form-modal" wx:if="{{showForm}}">
+    <view class="form-mask" bindtap="hideForm"></view>
+    <view class="form-content">
+      <text class="text-lg text-bold">{{editId ? '编辑店铺' : '添加店铺'}}</text>
+      <view class="form-item mt-20"><text class="form-label">店铺名称 *</text><input class="form-input" value="{{form.name}}" bindinput="onFormInput" data-field="name"/></view>
+      <view class="form-item"><text class="form-label">店铺描述</text><textarea class="form-textarea" value="{{form.description}}" bindinput="onFormInput" data-field="description"/></view>
+      <view class="form-item"><text class="form-label">地址</text><input class="form-input" value="{{form.address}}" bindinput="onFormInput" data-field="address"/></view>
+      <view class="form-item"><text class="form-label">电话</text><input class="form-input" value="{{form.phone}}" bindinput="onFormInput" data-field="phone"/></view>
+      <view class="form-item"><text class="form-label">营业时间</text><input class="form-input" placeholder="如 08:00-22:00" value="{{form.businessHours}}" bindinput="onFormInput" data-field="businessHours"/></view>
+      <view class="form-item"><text class="form-label">人均消费</text><input class="form-input" type="digit" value="{{form.avgPrice}}" bindinput="onFormInput" data-field="avgPrice"/></view>
+      <view class="form-item"><text class="form-label">分类</text>
+        <picker range="{{categories}}" range-key="name" bindchange="onCategoryChange"><view class="form-input">{{form.categoryId ? '已选择' : '请选择分类'}}</view></picker>
+      </view>
+      <view class="form-item"><text class="form-label">标签(逗号分隔)</text><input class="form-input" value="{{form.tags}}" bindinput="onFormInput" data-field="tags"/></view>
+      <button class="btn-primary mt-20" bindtap="saveShop">保存</button>
+    </view>
+  </view>
+</view>

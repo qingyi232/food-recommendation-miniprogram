@@ -1,0 +1,36 @@
+<view class="page-dish-detail" wx:if="{{dish}}">
+  <image class="dish-banner" src="{{dish.image || '/images/default-dish.png'}}" mode="aspectFill"/>
+  <view class="dish-header card">
+    <view class="flex-between">
+      <text class="text-xl text-bold">{{dish.name}}</text>
+      <view class="favorite-btn" bindtap="toggleFavorite">
+        <text>{{isFavorite ? '❤️' : '🤍'}}</text>
+      </view>
+    </view>
+    <view class="flex-row mt-10">
+      <text class="price text-lg"><text class="price-symbol">¥</text>{{dish.price}}</text>
+      <text class="text-gray text-sm ml-20" wx:if="{{dish.originalPrice}}" style="text-decoration:line-through">¥{{dish.originalPrice}}</text>
+    </view>
+    <view class="flex-row mt-10">
+      <text class="rating-star">★ {{dish.rating}}</text>
+      <text class="text-gray text-sm ml-20">已售{{dish.sales}}份</text>
+    </view>
+    <view class="mt-10" wx:if="{{dish.spicyLevel > 0}}">
+      <text class="text-sm">辣度：</text>
+      <text class="text-primary" wx:for="{{dish.spicyLevel}}" wx:key="*this">🌶️</text>
+    </view>
+    <view class="mt-10 text-gray text-sm" wx:if="{{dish.description}}">{{dish.description}}</view>
+    <view class="shop-tags mt-10" wx:if="{{dish.tags}}">
+      <text class="tag" wx:for="{{dish.tags.split(',')}}" wx:key="*this">{{item}}</text>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{dish.shopName}}" bindtap="goShop">
+    <view class="flex-between">
+      <text class="text-bold">所属店铺：{{dish.shopName}}</text>
+      <text class="text-primary text-sm">进店看看 ></text>
+    </view>
+  </view>
+
+  <button class="share-btn" open-type="share">分享给好友</button>
+</view>

@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>校园美食推荐 - 管理后台</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.0/dist/axios.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f0f2f5; color: #333; }
+        
+        .login-page { display: flex; min-height: 100vh; background: #f0f2f5; }
+        .login-left {
+            flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&q=80') center/cover no-repeat;
+            color: #fff; padding: 60px; position: relative; overflow: hidden;
+        }
+        .login-left::before {
+            content: ''; position: absolute; inset: 0;
+            background: rgba(0,0,0,0.35);
+        }
+        .login-left h1 { font-size: 42px; margin-bottom: 16px; z-index: 1; text-shadow: 0 2px 12px rgba(0,0,0,0.5); }
+        .login-left p { font-size: 18px; opacity: 0.95; z-index: 1; text-align: center; line-height: 1.8; text-shadow: 0 1px 6px rgba(0,0,0,0.4); }
+        .login-features { display: flex; gap: 32px; margin-top: 48px; z-index: 1; }
+        .login-feature { text-align: center; }
+        .login-feature .feat-icon { font-size: 36px; margin-bottom: 8px; }
+        .login-feature .feat-text { font-size: 14px; opacity: 0.95; text-shadow: 0 1px 4px rgba(0,0,0,0.4); }
+        .login-right { width: 480px; display: flex; justify-content: center; align-items: center; background: #fff; box-shadow: -4px 0 24px rgba(0,0,0,0.08); }
+        .login-box { padding: 48px 40px; width: 100%; max-width: 380px; }
+        .login-box h2 { text-align: center; color: #ff6b35; margin-bottom: 8px; font-size: 26px; }
+        .login-subtitle { text-align: center; color: #999; font-size: 14px; margin-bottom: 36px; }
+        .login-box .form-group { margin-bottom: 20px; }
+        .login-box label { display: block; margin-bottom: 8px; color: #666; font-size: 14px; }
+        .login-box input { width: 100%; padding: 12px 16px; border: 1px solid #e8e8e8; border-radius: 8px; font-size: 14px; outline: none; transition: all 0.3s; background: #fafafa; }
+        .login-box input:focus { border-color: #ff6b35; background: #fff; box-shadow: 0 0 0 3px rgba(255,107,53,0.1); }
+        .login-btn { width: 100%; padding: 13px; background: linear-gradient(135deg, #ff6b35, #ff8c5a); color: #fff; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 12px; transition: transform 0.2s, box-shadow 0.2s; }
+        .login-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(255,107,53,0.4); }
+        .login-footer { text-align: center; margin-top: 24px; font-size: 12px; color: #ccc; }
+        
+        .admin-layout { display: flex; min-height: 100vh; }
+        .sidebar { width: 240px; background: #001529; color: #fff; position: fixed; height: 100vh; overflow-y: auto; }
+        .sidebar-logo { padding: 20px; text-align: center; font-size: 18px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.1); color: #ff6b35; }
+        .sidebar-menu { list-style: none; padding: 8px 0; }
+        .sidebar-menu li { padding: 14px 24px; cursor: pointer; transition: all 0.3s; font-size: 14px; display: flex; align-items: center; }
+        .sidebar-menu li:hover, .sidebar-menu li.active { background: #ff6b35; }
+        .sidebar-menu li .icon { margin-right: 10px; font-size: 16px; display: inline-flex; align-items: center; }
+        .sidebar-menu li .icon svg, .sidebar-logo svg, .feat-icon svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        .sidebar-logo svg { width: 24px; height: 24px; margin-right: 8px; display: inline-block; vertical-align: middle; }
+        .feat-icon svg { width: 36px; height: 36px; stroke: #fff; }
+        .login-left h1 svg { width: 48px; height: 48px; stroke: #fff; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; vertical-align: middle; margin-right: 8px; }
+        
+        .main-content { margin-left: 240px; flex: 1; }
+        .header { background: #fff; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 4px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 10; }
+        .header h3 { font-size: 18px; color: #333; }
+        .header .user-info { display: flex; align-items: center; gap: 12px; }
+        .logout-btn { padding: 6px 16px; background: #ff4d4f; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; }
+        
+        .content { padding: 24px; }
+        
+        .stat-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .stat-card .stat-title { font-size: 14px; color: #999; }
+        .stat-card .stat-value { font-size: 32px; font-weight: bold; margin-top: 8px; color: #333; }
+        .stat-card:nth-child(1) .stat-value { color: #ff6b35; }
+        .stat-card:nth-child(2) .stat-value { color: #52c41a; }
+        .stat-card:nth-child(3) .stat-value { color: #1890ff; }
+        .stat-card:nth-child(4) .stat-value { color: #722ed1; }
+        
+        .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+        .chart-card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .chart-card h4 { margin-bottom: 16px; font-size: 16px; color: #333; }
+        .chart-container { width: 100%; height: 320px; }
+        .chart-full { grid-column: 1 / -1; }
+        
+        .data-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .data-table th { background: #fafafa; padding: 14px 16px; text-align: left; font-size: 14px; color: #666; border-bottom: 1px solid #f0f0f0; }
+        .data-table td { padding: 14px 16px; font-size: 14px; border-bottom: 1px solid #f0f0f0; }
+        .data-table tr:hover td { background: #fafafa; }
+        
+        .table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .table-header h4 { font-size: 16px; }
+        .search-input { padding: 8px 16px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; outline: none; width: 240px; }
+        .search-input:focus { border-color: #ff6b35; }
+        
+        .status-badge { padding: 4px 12px; border-radius: 12px; font-size: 12px; }
+        .status-normal { background: #f6ffed; color: #52c41a; }
+        .status-pending { background: #fff7e6; color: #fa8c16; }
+        .status-disabled { background: #fff1f0; color: #ff4d4f; }
+        
+        .action-btn { padding: 4px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; margin-right: 4px; }
+        .btn-approve { background: #52c41a; color: #fff; }
+        .btn-disable { background: #ff4d4f; color: #fff; }
+        .btn-enable { background: #1890ff; color: #fff; }
+        .btn-warn { background: #fa8c16; color: #fff; }
+        .btn-delete { background: #ff4d4f; color: #fff; }
+        
+        .page-section { display: none; }
+        .page-section.active { display: block; }
+        
+        .pagination { display: flex; justify-content: center; margin-top: 16px; gap: 8px; }
+        .pagination button { padding: 6px 14px; border: 1px solid #ddd; background: #fff; border-radius: 4px; cursor: pointer; }
+        .pagination button.active { background: #ff6b35; color: #fff; border-color: #ff6b35; }
+        .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: #fff; border-radius: 12px; padding: 32px; width: 500px; max-height: 80vh; overflow-y: auto; }
+        .modal-content h3 { margin-bottom: 20px; }
+        .modal-content .form-group { margin-bottom: 16px; }
+        .modal-content label { display: block; margin-bottom: 6px; font-size: 14px; color: #666; }
+        .modal-content input, .modal-content select, .modal-content textarea { width: 100%; padding: 10px 14px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; outline: none; }
+        .modal-content textarea { height: 80px; resize: vertical; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; }
+        .modal-actions button { padding: 8px 24px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; }
+        .btn-confirm { background: #ff6b35; color: #fff; }
+        .btn-cancel { background: #f0f0f0; color: #666; }
+        
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <!-- 登录页 -->
+    <div id="loginPage" class="login-page">
+        <div class="login-left">
+            <h1><svg viewBox="0 0 24 24"><path d="M3 2l1 18h16l1-18"/><path d="M8 2v4c0 2 2 4 4 4s4-2 4-4V2"/><line x1="12" y1="14" x2="12" y2="20"/><line x1="8" y1="20" x2="16" y2="20"/></svg> 校园美食推荐</h1>
+            <p>智能推荐 · 数据驱动 · 高效管理</p>
+            <div class="login-features">
+                <div class="login-feature">
+                    <div class="feat-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+                    <div class="feat-text">数据可视化</div>
+                </div>
+                <div class="login-feature">
+                    <div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M12 2a4 4 0 0 1 4 4v2a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M6 10v1a6 6 0 0 0 12 0v-1"/><path d="M12 17v4"/><path d="M8 21h8"/></svg></div>
+                    <div class="feat-text">个性化推荐</div>
+                </div>
+                <div class="login-feature">
+                    <div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+                    <div class="feat-text">商家管理</div>
+                </div>
+                <div class="login-feature">
+                    <div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+                    <div class="feat-text">用户运营</div>
+                </div>
+            </div>
+        </div>
+        <div class="login-right">
+            <div class="login-box">
+                <h2>管理后台</h2>
+                <p class="login-subtitle">Campus Food Recommendation Admin</p>
+                <div class="form-group">
+                    <label>用户名</label>
+                    <input type="text" id="loginUsername" placeholder="请输入管理员用户名" value="admin">
+                </div>
+                <div class="form-group">
+                    <label>密码</label>
+                    <input type="password" id="loginPassword" placeholder="请输入密码" value="admin123">
+                </div>
+                <button class="login-btn" onclick="doLogin()">登 录</button>
+                <div class="login-footer">© 2026 校园美食推荐系统 管理后台</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 管理后台 -->
+    <div id="adminPage" class="admin-layout hidden">
+        <div class="sidebar">
+            <div class="sidebar-logo"><svg viewBox="0 0 24 24"><path d="M3 2l1 18h16l1-18"/><path d="M8 2v4c0 2 2 4 4 4s4-2 4-4V2"/><line x1="12" y1="14" x2="12" y2="20"/><line x1="8" y1="20" x2="16" y2="20"/></svg> 美食推荐后台</div>
+            <ul class="sidebar-menu">
+                <li class="active" onclick="switchPage('dashboard', this)"><span class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span> 数据概览</li>
+                <li onclick="switchPage('visualization', this)"><span class="icon"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span> 可视化分析</li>
+                <li onclick="switchPage('merchants', this)"><span class="icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span> 商家管理</li>
+                <li onclick="switchPage('users', this)"><span class="icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span> 用户管理</li>
+                <li onclick="switchPage('merchantViolation', this)"><span class="icon"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span> 违规商家处理</li>
+                <li onclick="switchPage('userViolation', this)"><span class="icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg></span> 用户违规处理</li>
+                <li onclick="switchPage('reviews', this)"><span class="icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span> 评价管理</li>
+                <li onclick="switchPage('categories', this)"><span class="icon"><svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></span> 分类管理</li>
+            </ul>
+        </div>
+        <div class="main-content">
+            <div class="header">
+                <h3 id="pageTitle">数据概览</h3>
+                <div class="user-info">
+                    <span id="adminName">管理员</span>
+                    <button class="logout-btn" onclick="doLogout()">退出登录</button>
+                </div>
+            </div>
+            <div class="content">
+                <!-- 数据概览 -->
+                <div id="page-dashboard" class="page-section active">
+                    <div class="stat-cards" id="statCards"></div>
+                    <div class="chart-row">
+                        <div class="chart-card">
+                            <h4>各分类店铺数量</h4>
+                            <div class="chart-container" id="chart-category-shop"></div>
+                        </div>
+                        <div class="chart-card">
+                            <h4>订单状态分布</h4>
+                            <div class="chart-container" id="chart-order-status"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 可视化分析 -->
+                <div id="page-visualization" class="page-section">
+                    <div class="chart-row">
+                        <div class="chart-card">
+                            <h4>各分类菜品数量分布</h4>
+                            <div class="chart-container" id="chart-category-dish"></div>
+                        </div>
+                        <div class="chart-card">
+                            <h4>店铺评分TOP10</h4>
+                            <div class="chart-container" id="chart-shop-rating"></div>
+                        </div>
+                    </div>
+                    <div class="chart-row">
+                        <div class="chart-card">
+                            <h4>菜品销量TOP10</h4>
+                            <div class="chart-container" id="chart-dish-sales"></div>
+                        </div>
+                        <div class="chart-card">
+                            <h4>用户性别分布</h4>
+                            <div class="chart-container" id="chart-gender"></div>
+                        </div>
+                    </div>
+                    <div class="chart-row">
+                        <div class="chart-card">
+                            <h4>商家状态分布</h4>
+                            <div class="chart-container" id="chart-merchant-status"></div>
+                        </div>
+                        <div class="chart-card">
+                            <h4>评价评分分布</h4>
+                            <div class="chart-container" id="chart-review-rating"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 商家管理 -->
+                <div id="page-merchants" class="page-section">
+                    <div class="table-header">
+                        <h4>商家列表</h4>
+                        <input class="search-input" placeholder="搜索商家名称/用户名" oninput="searchMerchants(this.value)">
+                    </div>
+                    <table class="data-table">
+                        <thead><tr><th>ID</th><th>用户名</th><th>商家名称</th><th>联系人</th><th>电话</th><th>状态</th><th>违规次数</th><th>注册时间</th><th>操作</th></tr></thead>
+                        <tbody id="merchantTableBody"></tbody>
+                    </table>
+                    <div class="pagination" id="merchantPagination"></div>
+                </div>
+
+                <!-- 用户管理 -->
+                <div id="page-users" class="page-section">
+                    <div class="table-header">
+                        <h4>用户列表</h4>
+                        <input class="search-input" placeholder="搜索用户名/昵称" oninput="searchUsers(this.value)">
+                    </div>
+                    <table class="data-table">
+                        <thead><tr><th>ID</th><th>用户名</th><th>昵称</th><th>手机号</th><th>性别</th><th>状态</th><th>注册时间</th><th>操作</th></tr></thead>
+                        <tbody id="userTableBody"></tbody>
+                    </table>
+                    <div class="pagination" id="userPagination"></div>
+                </div>
+
+                <!-- 违规商家处理 -->
+                <div id="page-merchantViolation" class="page-section">
+                    <div class="table-header">
+                        <h4>违规商家处理</h4>
+                    </div>
+                    <table class="data-table">
+                        <thead><tr><th>ID</th><th>用户名</th><th>商家名称</th><th>违规次数</th><th>状态</th><th>操作</th></tr></thead>
+                        <tbody id="merchantViolationBody"></tbody>
+                    </table>
+                </div>
+
+                <!-- 用户违规处理 -->
+                <div id="page-userViolation" class="page-section">
+                    <div class="table-header">
+                        <h4>用户违规处理</h4>
+                    </div>
+                    <table class="data-table">
+                        <thead><tr><th>ID</th><th>用户名</th><th>昵称</th><th>状态</th><th>操作</th></tr></thead>
+                        <tbody id="userViolationBody"></tbody>
+                    </table>
+                </div>
+
+                <!-- 评价管理 -->
+                <div id="page-reviews" class="page-section">
+                    <div class="table-header">
+                        <h4>评价列表</h4>
+                    </div>
+                    <table class="data-table">
+                        <thead><tr><th>ID</th><th>用户</th><th>店铺</th><th>评分</th><th>内容</th><th>状态</th><th>时间</th><th>操作</th></tr></thead>
+                        <tbody id="reviewTableBody"></tbody>
+                    </table>
+                    <div class="pagination" id="reviewPagination"></div>
+                </div>
+
+                <!-- 分类管理 -->
+                <div id="page-categories" class="page-section">
+                    <div class="table-header">
+                        <h4>分类列表</h4>
+                        <button class="action-btn btn-approve" onclick="openCategoryModal()">+ 新增分类</button>
+                    </div>
+                    <table class="data-table">
+                        <thead><tr><th>ID</th><th>分类名称</th><th>图标</th><th>排序</th><th>状态</th><th>操作</th></tr></thead>
+                        <tbody id="categoryTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 违规处理弹窗 -->
+    <div id="violationModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3>违规处理</h3>
+            <div class="form-group">
+                <label>违规对象</label>
+                <input type="text" id="violationTarget" readonly>
+            </div>
+            <div class="form-group">
+                <label>违规原因</label>
+                <textarea id="violationReason" placeholder="请输入违规原因"></textarea>
+            </div>
+            <div class="form-group">
+                <label>处理措施</label>
+                <select id="violationAction">
+                    <option value="warn">警告</option>
+                    <option value="disable">禁用账号</option>
+                    <option value="ban">永久封禁</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeViolationModal()">取消</button>
+                <button class="btn-confirm" onclick="submitViolation()">确认处理</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 分类编辑弹窗 -->
+    <div id="categoryModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 id="categoryModalTitle">新增分类</h3>
+            <div class="form-group">
+                <label>分类名称</label>
+                <input type="text" id="categoryName" placeholder="请输入分类名称">
+            </div>
+            <div class="form-group">
+                <label>图标路径</label>
+                <input type="text" id="categoryIcon" placeholder="如 /images/category/xxx.png">
+            </div>
+            <div class="form-group">
+                <label>排序值</label>
+                <input type="number" id="categorySortOrder" placeholder="数字越小越靠前" value="0">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeCategoryModal()">取消</button>
+                <button class="btn-confirm" onclick="saveCategory()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const BASE_URL = window.location.origin;
+        let token = localStorage.getItem('admin_token');
+        let currentMerchantPage = 1, currentUserPage = 1, currentReviewPage = 1;
+        let merchantKeyword = '', userKeyword = '';
+        let violationTargetType = '', violationTargetId = '';
+
+        const api = axios.create({ baseURL: BASE_URL });
+        api.interceptors.request.use(config => {
+            if (token) config.headers.Authorization = 'Bearer ' + token;
+            return config;
+        });
+
+        if (token) { showAdmin(); }
+
+        async function doLogin() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            try {
+                const res = await api.post('/api/admin/login', { username, password });
+                if (res.data.code === 200) {
+                    token = res.data.data.token;
+                    localStorage.setItem('admin_token', token);
+                    localStorage.setItem('admin_info', JSON.stringify(res.data.data.adminInfo));
+                    showAdmin();
+                } else {
+                    alert(res.data.message);
+                }
+            } catch (e) { alert('登录失败'); }
+        }
+
+        function doLogout() {
+            token = null;
+            localStorage.removeItem('admin_token');
+            localStorage.removeItem('admin_info');
+            document.getElementById('loginPage').classList.remove('hidden');
+            document.getElementById('adminPage').classList.add('hidden');
+        }
+
+        function showAdmin() {
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('adminPage').classList.remove('hidden');
+            const info = JSON.parse(localStorage.getItem('admin_info') || '{}');
+            document.getElementById('adminName').textContent = info.name || '管理员';
+            loadDashboard();
+        }
+
+        function switchPage(page, el) {
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            document.getElementById('page-' + page).classList.add('active');
+            document.querySelectorAll('.sidebar-menu li').forEach(li => li.classList.remove('active'));
+            if (el) el.classList.add('active');
+            
+            const titles = { dashboard: '数据概览', visualization: '可视化分析', merchants: '商家管理', users: '用户管理', merchantViolation: '违规商家处理', userViolation: '用户违规处理', reviews: '评价管理', categories: '分类管理' };
+            document.getElementById('pageTitle').textContent = titles[page] || '';
+            
+            if (page === 'dashboard') loadDashboard();
+            else if (page === 'visualization') loadVisualization();
+            else if (page === 'merchants') loadMerchants();
+            else if (page === 'users') loadUsers();
+            else if (page === 'merchantViolation') loadMerchantViolations();
+            else if (page === 'userViolation') loadUserViolations();
+            else if (page === 'reviews') loadReviews();
+            else if (page === 'categories') loadCategories();
+        }
+
+        async function loadDashboard() {
+            try {
+                const [statsRes, visRes] = await Promise.all([
+                    api.get('/api/admin/statistics'),
+                    api.get('/api/admin/visualization')
+                ]);
+                const stats = statsRes.data.data;
+                const vis = visRes.data.data;
+
+                document.getElementById('statCards').innerHTML = `
+                    <div class="stat-card"><div class="stat-title">用户总数</div><div class="stat-value">${stats.userCount}</div></div>
+                    <div class="stat-card"><div class="stat-title">商家总数</div><div class="stat-value">${stats.merchantCount}</div></div>
+                    <div class="stat-card"><div class="stat-title">店铺总数</div><div class="stat-value">${stats.shopCount}</div></div>
+                    <div class="stat-card"><div class="stat-title">订单总数</div><div class="stat-value">${stats.orderCount}</div></div>
+                    <div class="stat-card"><div class="stat-title">菜品总数</div><div class="stat-value">${stats.dishCount}</div></div>
+                    <div class="stat-card"><div class="stat-title">评价总数</div><div class="stat-value">${stats.reviewCount}</div></div>
+                    <div class="stat-card"><div class="stat-title">待审核商家</div><div class="stat-value">${stats.pendingMerchants}</div></div>
+                    <div class="stat-card"><div class="stat-title">违规评价</div><div class="stat-value">${stats.violationReviews}</div></div>
+                `;
+
+                renderPieChart('chart-category-shop', vis.categoryShopStats);
+                renderOrderStatusChart('chart-order-status', vis.orderStatusStats);
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadVisualization() {
+            try {
+                const res = await api.get('/api/admin/visualization');
+                const vis = res.data.data;
+                renderPieChart('chart-category-dish', vis.categoryDishStats);
+                renderBarChart('chart-shop-rating', vis.shopRatingTop, 'name', 'rating', '评分');
+                renderBarChart('chart-dish-sales', vis.dishSalesTop, 'name', 'sales', '销量');
+                renderGenderChart('chart-gender', vis.genderStats);
+                renderMerchantStatusChart('chart-merchant-status', vis.merchantStatusStats);
+                renderReviewRatingChart('chart-review-rating', vis.reviewRatingDist);
+            } catch (e) { console.error(e); }
+        }
+
+        function renderPieChart(containerId, data) {
+            const chart = echarts.init(document.getElementById(containerId));
+            chart.setOption({
+                tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
+                legend: { bottom: '0%', type: 'scroll' },
+                color: ['#ff6b35','#52c41a','#1890ff','#722ed1','#fa8c16','#13c2c2','#eb2f96','#faad14','#2f54eb','#a0d911'],
+                series: [{ type: 'pie', radius: ['35%', '60%'], data: data.filter(d => d.value > 0), label: { formatter: '{b}\n{c}' }, emphasis: { itemStyle: { shadowBlur: 10, shadowOffsetX: 0, shadowColor: 'rgba(0,0,0,0.5)' } } }]
+            });
+        }
+
+        function renderBarChart(containerId, data, nameKey, valueKey, valueName) {
+            const chart = echarts.init(document.getElementById(containerId));
+            chart.setOption({
+                tooltip: { trigger: 'axis' },
+                grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+                xAxis: { type: 'category', data: data.map(d => d[nameKey]), axisLabel: { rotate: 30, fontSize: 11 } },
+                yAxis: { type: 'value' },
+                series: [{ name: valueName, type: 'bar', data: data.map(d => d[valueKey]), itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#ff6b35' }, { offset: 1, color: '#ff8c5a' }]) }, barWidth: '50%' }]
+            });
+        }
+
+        function renderOrderStatusChart(containerId, data) {
+            const chart = echarts.init(document.getElementById(containerId));
+            chart.setOption({
+                tooltip: { trigger: 'item' },
+                legend: { bottom: '0%' },
+                color: ['#fa8c16', '#1890ff', '#52c41a', '#ff4d4f'],
+                series: [{ type: 'pie', radius: '60%', data: [
+                    { name: '待确认', value: data.pending }, { name: '已确认', value: data.confirmed },
+                    { name: '已完成', value: data.completed }, { name: '已取消', value: data.cancelled }
+                ].filter(d => d.value > 0) }]
+            });
+        }
+
+        function renderGenderChart(containerId, data) {
+            const chart = echarts.init(document.getElementById(containerId));
+            chart.setOption({
+                tooltip: { trigger: 'item' },
+                legend: { bottom: '0%' },
+                color: ['#999', '#1890ff', '#eb2f96'],
+                series: [{ type: 'pie', radius: ['35%', '60%'], data: [
+                    { name: '未知', value: data.unknown }, { name: '男', value: data.male }, { name: '女', value: data.female }
+                ].filter(d => d.value > 0) }]
+            });
+        }
+
+        function renderMerchantStatusChart(containerId, data) {
+            const chart = echarts.init(document.getElementById(containerId));
+            chart.setOption({
+                tooltip: { trigger: 'item' },
+                legend: { bottom: '0%' },
+                color: ['#fa8c16', '#52c41a', '#ff4d4f'],
+                series: [{ type: 'pie', radius: '60%', data: [
+                    { name: '待审核', value: data.pending }, { name: '正常', value: data.normal }, { name: '已禁用', value: data.disabled }
+                ].filter(d => d.value > 0) }]
+            });
+        }
+
+        function renderReviewRatingChart(containerId, data) {
+            const chart = echarts.init(document.getElementById(containerId));
+            chart.setOption({
+                tooltip: { trigger: 'axis' },
+                grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+                xAxis: { type: 'category', data: data.map(d => d.rating) },
+                yAxis: { type: 'value' },
+                series: [{ type: 'bar', data: data.map(d => d.count), itemStyle: { color: '#ffb800' }, barWidth: '40%' }]
+            });
+        }
+
+        // 商家管理
+        async function loadMerchants(page) {
+            currentMerchantPage = page || 1;
+            try {
+                const res = await api.get('/api/merchant/page', { params: { page: currentMerchantPage, size: 10, keyword: merchantKeyword } });
+                const data = res.data.data;
+                const genderMap = { 0: '未知', 1: '男', 2: '女' };
+                const statusMap = { 0: ['待审核', 'status-pending'], 1: ['正常', 'status-normal'], 2: ['已禁用', 'status-disabled'] };
+                document.getElementById('merchantTableBody').innerHTML = data.records.map(m => `
+                    <tr>
+                        <td>${m.id}</td><td>${m.username}</td><td>${m.name}</td><td>${m.contactName || '-'}</td><td>${m.phone || '-'}</td>
+                        <td><span class="status-badge ${statusMap[m.status][1]}">${statusMap[m.status][0]}</span></td>
+                        <td>${m.violationCount}</td><td>${m.createTime || '-'}</td>
+                        <td>
+                            ${m.status === 0 ? `<button class="action-btn btn-approve" onclick="updateMerchantStatus(${m.id}, 1)">审核通过</button>` : ''}
+                            ${m.status === 1 ? `<button class="action-btn btn-disable" onclick="updateMerchantStatus(${m.id}, 2)">禁用</button>` : ''}
+                            ${m.status === 2 ? `<button class="action-btn btn-enable" onclick="updateMerchantStatus(${m.id}, 1)">启用</button>` : ''}
+                        </td>
+                    </tr>
+                `).join('');
+                renderPagination('merchantPagination', data.total, currentMerchantPage, 10, loadMerchants);
+            } catch (e) { console.error(e); }
+        }
+
+        function searchMerchants(keyword) { merchantKeyword = keyword; loadMerchants(1); }
+
+        async function updateMerchantStatus(id, status) {
+            if (!confirm('确认操作？')) return;
+            await api.put('/api/merchant/status/' + id, { status });
+            loadMerchants(currentMerchantPage);
+        }
+
+        // 用户管理
+        async function loadUsers(page) {
+            currentUserPage = page || 1;
+            try {
+                const res = await api.get('/api/user/page', { params: { page: currentUserPage, size: 10, keyword: userKeyword } });
+                const data = res.data.data;
+                const genderMap = { 0: '未知', 1: '男', 2: '女' };
+                document.getElementById('userTableBody').innerHTML = data.records.map(u => `
+                    <tr>
+                        <td>${u.id}</td><td>${u.username}</td><td>${u.nickname || '-'}</td><td>${u.phone || '-'}</td>
+                        <td>${genderMap[u.gender] || '未知'}</td>
+                        <td><span class="status-badge ${u.status === 1 ? 'status-normal' : 'status-disabled'}">${u.status === 1 ? '正常' : '禁用'}</span></td>
+                        <td>${u.createTime || '-'}</td>
+                        <td>
+                            ${u.status === 1 ? `<button class="action-btn btn-disable" onclick="updateUserStatus(${u.id}, 0)">禁用</button>` : `<button class="action-btn btn-enable" onclick="updateUserStatus(${u.id}, 1)">启用</button>`}
+                        </td>
+                    </tr>
+                `).join('');
+                renderPagination('userPagination', data.total, currentUserPage, 10, loadUsers);
+            } catch (e) { console.error(e); }
+        }
+
+        function searchUsers(keyword) { userKeyword = keyword; loadUsers(1); }
+
+        async function updateUserStatus(id, status) {
+            if (!confirm('确认操作？')) return;
+            await api.put('/api/user/status/' + id, { status });
+            loadUsers(currentUserPage);
+        }
+
+        // 违规商家处理
+        async function loadMerchantViolations() {
+            try {
+                const res = await api.get('/api/merchant/page', { params: { page: 1, size: 100 } });
+                document.getElementById('merchantViolationBody').innerHTML = res.data.data.records.map(m => `
+                    <tr>
+                        <td>${m.id}</td><td>${m.username}</td><td>${m.name}</td><td>${m.violationCount}</td>
+                        <td><span class="status-badge ${m.status === 1 ? 'status-normal' : m.status === 0 ? 'status-pending' : 'status-disabled'}">${m.status === 1 ? '正常' : m.status === 0 ? '待审核' : '已禁用'}</span></td>
+                        <td><button class="action-btn btn-warn" onclick="openViolationModal('merchant', ${m.id}, '${m.name}')">违规处理</button></td>
+                    </tr>
+                `).join('');
+            } catch (e) { console.error(e); }
+        }
+
+        // 用户违规处理
+        async function loadUserViolations() {
+            try {
+                const res = await api.get('/api/user/page', { params: { page: 1, size: 100 } });
+                document.getElementById('userViolationBody').innerHTML = res.data.data.records.map(u => `
+                    <tr>
+                        <td>${u.id}</td><td>${u.username}</td><td>${u.nickname || '-'}</td>
+                        <td><span class="status-badge ${u.status === 1 ? 'status-normal' : 'status-disabled'}">${u.status === 1 ? '正常' : '禁用'}</span></td>
+                        <td><button class="action-btn btn-warn" onclick="openViolationModal('user', ${u.id}, '${u.nickname || u.username}')">违规处理</button></td>
+                    </tr>
+                `).join('');
+            } catch (e) { console.error(e); }
+        }
+
+        function openViolationModal(type, id, name) {
+            violationTargetType = type;
+            violationTargetId = id;
+            document.getElementById('violationTarget').value = (type === 'merchant' ? '商家' : '用户') + ': ' + name;
+            document.getElementById('violationReason').value = '';
+            document.getElementById('violationModal').classList.remove('hidden');
+        }
+
+        function closeViolationModal() { document.getElementById('violationModal').classList.add('hidden'); }
+
+        async function submitViolation() {
+            const reason = document.getElementById('violationReason').value;
+            const action = document.getElementById('violationAction').value;
+            if (!reason) { alert('请输入违规原因'); return; }
+            try {
+                await api.post('/api/violation/add', { targetType: violationTargetType, targetId: violationTargetId, reason, action });
+                alert('处理成功');
+                closeViolationModal();
+                if (violationTargetType === 'merchant') loadMerchantViolations();
+                else loadUserViolations();
+            } catch (e) { alert('处理失败'); }
+        }
+
+        // 评价管理
+        async function loadReviews(page) {
+            currentReviewPage = page || 1;
+            try {
+                const res = await api.get('/api/review/list', { params: { page: currentReviewPage, size: 10 } });
+                const data = res.data.data;
+                const statusMap = { 0: ['隐藏', 'status-disabled'], 1: ['正常', 'status-normal'], 2: ['违规', 'status-disabled'] };
+                document.getElementById('reviewTableBody').innerHTML = data.records.map(r => `
+                    <tr>
+                        <td>${r.id}</td><td>${r.userName || '-'}</td><td>${r.shopName || '-'}</td>
+                        <td>★ ${r.rating}</td>
+                        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.content || '-'}</td>
+                        <td><span class="status-badge ${(statusMap[r.status] || statusMap[1])[1]}">${(statusMap[r.status] || statusMap[1])[0]}</span></td>
+                        <td>${r.createTime || '-'}</td>
+                        <td>
+                            ${r.status === 1 ? `<button class="action-btn btn-warn" onclick="updateReviewStatus(${r.id}, 2)">标记违规</button>` : ''}
+                            ${r.status === 2 ? `<button class="action-btn btn-enable" onclick="updateReviewStatus(${r.id}, 1)">恢复</button>` : ''}
+                            <button class="action-btn btn-delete" onclick="deleteReview(${r.id})">删除</button>
+                        </td>
+                    </tr>
+                `).join('');
+                renderPagination('reviewPagination', data.total, currentReviewPage, 10, loadReviews);
+            } catch (e) { console.error(e); }
+        }
+
+        async function updateReviewStatus(id, status) {
+            if (!confirm('确认操作？')) return;
+            await api.put('/api/review/status/' + id, { status });
+            loadReviews(currentReviewPage);
+        }
+
+        async function deleteReview(id) {
+            if (!confirm('确认删除此评价？')) return;
+            await api.delete('/api/review/' + id);
+            loadReviews(currentReviewPage);
+        }
+
+        // 分类管理
+        let editingCategoryId = null;
+        async function loadCategories() {
+            try {
+                const res = await api.get('/api/category/list');
+                const data = res.data.data;
+                document.getElementById('categoryTableBody').innerHTML = data.map(c => `
+                    <tr>
+                        <td>${c.id}</td><td>${c.name}</td><td>${c.icon || '-'}</td><td>${c.sortOrder}</td>
+                        <td><span class="status-badge ${c.status === 1 ? 'status-normal' : 'status-disabled'}">${c.status === 1 ? '正常' : '禁用'}</span></td>
+                        <td>
+                            <button class="action-btn btn-approve" onclick="editCategory(${c.id}, '${c.name}', '${c.icon || ''}', ${c.sortOrder})">编辑</button>
+                            <button class="action-btn btn-delete" onclick="deleteCategory(${c.id})">删除</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (e) { console.error(e); }
+        }
+
+        function openCategoryModal() {
+            editingCategoryId = null;
+            document.getElementById('categoryModalTitle').textContent = '新增分类';
+            document.getElementById('categoryName').value = '';
+            document.getElementById('categoryIcon').value = '';
+            document.getElementById('categorySortOrder').value = '0';
+            document.getElementById('categoryModal').classList.remove('hidden');
+        }
+
+        function editCategory(id, name, icon, sortOrder) {
+            editingCategoryId = id;
+            document.getElementById('categoryModalTitle').textContent = '编辑分类';
+            document.getElementById('categoryName').value = name;
+            document.getElementById('categoryIcon').value = icon;
+            document.getElementById('categorySortOrder').value = sortOrder;
+            document.getElementById('categoryModal').classList.remove('hidden');
+        }
+
+        function closeCategoryModal() { document.getElementById('categoryModal').classList.add('hidden'); }
+
+        async function saveCategory() {
+            const name = document.getElementById('categoryName').value;
+            const icon = document.getElementById('categoryIcon').value;
+            const sortOrder = parseInt(document.getElementById('categorySortOrder').value) || 0;
+            if (!name) { alert('请输入分类名称'); return; }
+            try {
+                if (editingCategoryId) {
+                    await api.put('/api/category/update', { id: editingCategoryId, name, icon, sortOrder });
+                } else {
+                    await api.post('/api/category/add', { name, icon, sortOrder });
+                }
+                closeCategoryModal();
+                loadCategories();
+            } catch (e) { alert('保存失败'); }
+        }
+
+        async function deleteCategory(id) {
+            if (!confirm('确认删除该分类？')) return;
+            try {
+                await api.delete('/api/category/' + id);
+                loadCategories();
+            } catch (e) { alert('删除失败'); }
+        }
+
+        function renderPagination(containerId, total, current, pageSize, callback) {
+            const totalPages = Math.ceil(total / pageSize);
+            if (totalPages <= 1) { document.getElementById(containerId).innerHTML = ''; return; }
+            let html = `<button ${current <= 1 ? 'disabled' : ''} onclick="(${callback.name})(${current - 1})">上一页</button>`;
+            for (let i = 1; i <= totalPages && i <= 10; i++) {
+                html += `<button class="${i === current ? 'active' : ''}" onclick="(${callback.name})(${i})">${i}</button>`;
+            }
+            html += `<button ${current >= totalPages ? 'disabled' : ''} onclick="(${callback.name})(${current + 1})">下一页</button>`;
+            document.getElementById(containerId).innerHTML = html;
+        }
+    </script>
+</body>
+</html>

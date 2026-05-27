@@ -1,0 +1,24 @@
+<view class="container">
+  <view class="card">
+    <view class="form-item">
+      <text class="form-label">菜品图片</text>
+      <view class="img-upload-wrap">
+        <image wx:if="{{form.image}}" class="dish-preview" src="{{form.image}}" mode="aspectFill" bindtap="chooseImage"/>
+        <view wx:else class="img-upload-btn" bindtap="chooseImage">
+          <text class="upload-icon">+</text>
+          <text class="upload-text">上传图片</text>
+        </view>
+        <view wx:if="{{form.image}}" class="img-remove" bindtap="removeImage">×</view>
+      </view>
+    </view>
+    <view class="form-item"><text class="form-label">菜品名称 *</text><input class="form-input" value="{{form.name}}" bindinput="onFormInput" data-field="name"/></view>
+    <view class="form-item"><text class="form-label">菜品描述</text><textarea class="form-textarea" value="{{form.description}}" bindinput="onFormInput" data-field="description"/></view>
+    <view class="form-item"><text class="form-label">价格 *</text><input class="form-input" type="digit" value="{{form.price}}" bindinput="onFormInput" data-field="price"/></view>
+    <view class="form-item"><text class="form-label">原价</text><input class="form-input" type="digit" value="{{form.originalPrice}}" bindinput="onFormInput" data-field="originalPrice"/></view>
+    <view class="form-item"><text class="form-label">辣度</text>
+      <picker range="{{spicyOptions}}" bindchange="onSpicyChange"><view class="form-input">{{spicyOptions[form.spicyLevel]}}</view></picker>
+    </view>
+    <view class="form-item"><text class="form-label">标签(逗号分隔)</text><input class="form-input" value="{{form.tags}}" bindinput="onFormInput" data-field="tags"/></view>
+  </view>
+  <button class="btn-primary" bindtap="saveDish">保存</button>
+</view>

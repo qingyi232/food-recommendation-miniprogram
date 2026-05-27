@@ -1,0 +1,31 @@
+<view class="container">
+  <view class="card">
+    <text class="text-bold">综合评分</text>
+    <view class="star-row mt-10">
+      <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this" class="star-btn {{rating >= item ? 'active' : ''}}" bindtap="setRating" data-value="{{item}}">★</text>
+    </view>
+  </view>
+  <view class="card">
+    <text class="text-bold">口味评分</text>
+    <view class="star-row mt-10">
+      <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this" class="star-btn {{tasteRating >= item ? 'active' : ''}}" bindtap="setTasteRating" data-value="{{item}}">★</text>
+    </view>
+  </view>
+  <view class="card">
+    <text class="text-bold">服务评分</text>
+    <view class="star-row mt-10">
+      <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this" class="star-btn {{serviceRating >= item ? 'active' : ''}}" bindtap="setServiceRating" data-value="{{item}}">★</text>
+    </view>
+  </view>
+  <view class="card">
+    <text class="text-bold">环境评分</text>
+    <view class="star-row mt-10">
+      <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this" class="star-btn {{environmentRating >= item ? 'active' : ''}}" bindtap="setEnvironmentRating" data-value="{{item}}">★</text>
+    </view>
+  </view>
+  <view class="card">
+    <text class="text-bold">评价内容</text>
+    <textarea class="review-textarea mt-10" placeholder="分享你的用餐体验..." value="{{content}}" bindinput="onContentInput" maxlength="500"/>
+  </view>
+  <button class="btn-primary submit-btn" bindtap="submitReview">提交评价</button>
+</view>

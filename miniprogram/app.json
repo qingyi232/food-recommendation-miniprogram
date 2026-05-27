@@ -1,0 +1,70 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/category/category",
+    "pages/recommend/recommend",
+    "pages/mine/mine",
+    "pages/login/login",
+    "pages/register/register",
+    "pages/shop/list/list",
+    "pages/shop/detail/detail",
+    "pages/dish/detail/detail",
+    "pages/review/list/list",
+    "pages/review/add/add",
+    "pages/favorite/favorite",
+    "pages/order/list/list",
+    "pages/order/create/create",
+    "pages/search/search",
+    "pages/taste/taste",
+    "pages/merchant/login/login",
+    "pages/merchant/register/register",
+    "pages/merchant/index/index",
+    "pages/merchant/shop/edit/edit",
+    "pages/merchant/dish/list/list",
+    "pages/merchant/dish/edit/edit",
+    "pages/merchant/order/list/list",
+    "pages/merchant/stats/stats",
+    "pages/merchant/info/info",
+    "pages/merchant/review/list/list"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#ff6b35",
+    "navigationBarTitleText": "校园美食推荐",
+    "navigationBarTextStyle": "white"
+  },
+  "tabBar": {
+    "color": "#999",
+    "selectedColor": "#ff6b35",
+    "backgroundColor": "#fff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "images/tab/home.png",
+        "selectedIconPath": "images/tab/home-active.png"
+      },
+      {
+        "pagePath": "pages/category/category",
+        "text": "分类",
+        "iconPath": "images/tab/category.png",
+        "selectedIconPath": "images/tab/category-active.png"
+      },
+      {
+        "pagePath": "pages/recommend/recommend",
+        "text": "推荐",
+        "iconPath": "images/tab/recommend.png",
+        "selectedIconPath": "images/tab/recommend-active.png"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "text": "我的",
+        "iconPath": "images/tab/mine.png",
+        "selectedIconPath": "images/tab/mine-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

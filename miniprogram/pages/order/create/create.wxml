@@ -1,0 +1,21 @@
+<view class="container">
+  <view class="card">
+    <text class="text-bold text-lg">{{shopName}}</text>
+  </view>
+  <view class="card">
+    <text class="text-bold mb-10">已选菜品</text>
+    <view class="order-item" wx:for="{{items}}" wx:key="id">
+      <text class="flex-1">{{item.name}}</text>
+      <text class="text-gray">x{{item.quantity}}</text>
+      <text class="ml-20">¥{{item.price}}</text>
+    </view>
+  </view>
+  <view class="card">
+    <text class="text-bold">备注</text>
+    <textarea class="remark-input mt-10" placeholder="请输入备注信息" bindinput="onRemarkInput" maxlength="200"/>
+  </view>
+  <view class="total-bar">
+    <text>合计：<text class="price text-lg">¥{{totalAmount}}</text></text>
+    <button class="btn-primary submit-btn" bindtap="submitOrder">提交订单</button>
+  </view>
+</view>

@@ -1,0 +1,35 @@
+<view class="container">
+  <view class="card">
+    <text class="text-lg text-bold">口味偏好</text>
+    <text class="text-gray text-sm mt-10">设置您的口味偏好，获得更精准的推荐</text>
+
+    <view class="taste-item mt-20">
+      <view class="flex-between"><text>辣度偏好</text><text class="text-primary text-sm">{{levelLabels[spicy]}}</text></view>
+      <slider min="0" max="4" step="1" value="{{spicy}}" activeColor="#ff6b35" bindchange="onSliderChange" data-field="spicy"/>
+    </view>
+    <view class="taste-item">
+      <view class="flex-between"><text>甜度偏好</text><text class="text-primary text-sm">{{levelLabels[sweet]}}</text></view>
+      <slider min="0" max="4" step="1" value="{{sweet}}" activeColor="#ff6b35" bindchange="onSliderChange" data-field="sweet"/>
+    </view>
+    <view class="taste-item">
+      <view class="flex-between"><text>酸度偏好</text><text class="text-primary text-sm">{{levelLabels[sour]}}</text></view>
+      <slider min="0" max="4" step="1" value="{{sour}}" activeColor="#ff6b35" bindchange="onSliderChange" data-field="sour"/>
+    </view>
+    <view class="taste-item">
+      <view class="flex-between"><text>咸度偏好</text><text class="text-primary text-sm">{{levelLabels[salty]}}</text></view>
+      <slider min="0" max="4" step="1" value="{{salty}}" activeColor="#ff6b35" bindchange="onSliderChange" data-field="salty"/>
+    </view>
+  </view>
+
+  <view class="card">
+    <text class="text-lg text-bold">喜欢的分类</text>
+    <text class="text-gray text-sm mt-10">选择您喜欢的美食分类</text>
+    <view class="category-grid mt-20">
+      <view class="category-tag {{selectedCategories.indexOf(item.id) > -1 ? 'selected' : ''}}" 
+            wx:for="{{categories}}" wx:key="id" 
+            bindtap="toggleCategory" data-id="{{item.id}}">{{item.name}}</view>
+    </view>
+  </view>
+
+  <button class="btn-primary" bindtap="savePreference">保存偏好设置</button>
+</view>

@@ -1,0 +1,31 @@
+<view class="container">
+  <view class="review-item card" wx:for="{{reviews}}" wx:key="id">
+    <view class="flex-row">
+      <image class="review-avatar" src="{{item.userAvatar || '/images/default-avatar.png'}}" mode="aspectFill"/>
+      <view class="ml-10 flex-1">
+        <view class="flex-between">
+          <text class="text-sm text-bold">{{item.userName || '匿名用户'}}</text>
+          <text class="text-gray text-sm">{{item.createTime}}</text>
+        </view>
+        <view class="rating-star text-sm">★ {{item.rating}}</view>
+      </view>
+    </view>
+    <text class="review-content mt-10">{{item.content}}</text>
+    <view class="review-reply mt-10" wx:if="{{item.reply}}">
+      <text class="text-sm text-bold">我的回复：</text>
+      <text class="text-sm">{{item.reply}}</text>
+    </view>
+    <view class="reply-form mt-10" wx:if="{{replyingId === item.id}}">
+      <textarea class="reply-input" placeholder="输入回复内容" bindinput="onReplyInput" value="{{replyContent}}"/>
+      <view class="reply-actions mt-10">
+        <view class="action-btn" bindtap="submitReply">提交</view>
+        <view class="action-btn cancel" bindtap="cancelReply">取消</view>
+      </view>
+    </view>
+    <view class="mt-10" wx:if="{{!item.reply && replyingId !== item.id}}">
+      <text class="text-primary text-sm" bindtap="showReply" data-id="{{item.id}}">回复评价</text>
+    </view>
+  </view>
+  <view class="empty-tip" wx:if="{{reviews.length === 0 && !loading}}">暂无评价</view>
+  <view class="loading-tip" wx:if="{{loading}}">加载中...</view>
+</view>

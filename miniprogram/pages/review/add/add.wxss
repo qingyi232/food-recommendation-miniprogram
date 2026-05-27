@@ -1,0 +1,5 @@
+.star-row { display: flex; }
+.star-btn { font-size: 48rpx; color: #ddd; margin-right: 16rpx; }
+.star-btn.active { color: #ffb800; }
+.review-textarea { width: 100%; height: 240rpx; border: 2rpx solid #eee; border-radius: 12rpx; padding: 16rpx; font-size: 28rpx; background: #f9f9f9; box-sizing: border-box; }
+.submit-btn { margin-top: 40rpx; }

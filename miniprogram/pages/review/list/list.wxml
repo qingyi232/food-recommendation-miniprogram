@@ -1,0 +1,23 @@
+<view class="container">
+  <view class="review-item card" wx:for="{{reviews}}" wx:key="id">
+    <view class="flex-row">
+      <image class="review-avatar" src="{{item.userAvatar || '/images/default-avatar.png'}}" mode="aspectFill"/>
+      <view class="ml-10 flex-1">
+        <view class="flex-between">
+          <text class="text-sm text-bold">{{item.userName || '匿名用户'}}</text>
+          <text class="text-gray text-sm">{{item.createTime}}</text>
+        </view>
+        <view class="rating-star text-sm">★ {{item.rating}}</view>
+      </view>
+    </view>
+    <text class="review-content mt-10">{{item.content}}</text>
+    <view class="text-gray text-sm mt-10" wx:if="{{item.shopName}}">店铺：{{item.shopName}}</view>
+    <view class="review-reply mt-10" wx:if="{{item.reply}}">
+      <text class="text-sm text-bold">商家回复：</text>
+      <text class="text-sm">{{item.reply}}</text>
+    </view>
+  </view>
+  <view class="empty-tip" wx:if="{{reviews.length === 0 && !loading}}">暂无评价</view>
+  <view class="loading-tip" wx:if="{{loading}}">加载中...</view>
+  <view class="loading-tip" wx:if="{{!hasMore && reviews.length > 0}}">没有更多了</view>
+</view>
